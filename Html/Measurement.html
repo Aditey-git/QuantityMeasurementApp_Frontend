@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Measurement Tool</title>
+
+<link rel="stylesheet" href="../CSS/style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="background">
+    <div class="login-card measurement-card">
+        <h1 class="app-title">Measurement Tool</h1>
+        <p class="subtitle">Perform quantity operations</p>
+
+        <form id="measurementForm" class="measurement-layout">
+            <div class="left-panel">
+                <div class="input-group">
+                    <label>Category</label>
+                    <div id="categoryButtons" class="category-buttons" aria-label="Measurement categories"></div>
+                    <input type="hidden" id="category" value="Length">
+                </div>
+
+                <div class="input-group">
+                    <label>Operation</label>
+                    <select id="operation">
+                        <option value="Compare">Compare</option>
+                        <option value="Add">Add</option>
+                        <option value="Subtract">Subtract</option>
+                        <option value="Divide">Divide</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Target Unit</label>
+                    <select id="targetUnit"></select>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="values-container">
+                    <div class="value-box">
+                        <label>Value 1</label>
+                        <div class="input-with-select">
+                            <input type="number" id="value1" placeholder="Enter value 1">
+                            <select id="unit1"></select>
+                        </div>
+                    </div>
+                    
+                    <div class="operator-icon" id="operatorIcon">🧮</div>
+
+                    <div class="value-box">
+                        <label>Value 2</label>
+                        <div class="input-with-select">
+                            <input type="number" id="value2" placeholder="Enter value 2">
+                            <select id="unit2"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="result-box" class="result-box measurement-result">
+                    Result will appear here
+                </div>
+
+                <button class="login-btn execute-btn">Execute</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="../Javascript/Measurement.js"></script>
+
+</body>
+</html>
