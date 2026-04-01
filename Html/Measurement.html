@@ -1,46 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<title>Measurement Tool</title>
-
-<link rel="stylesheet" href="../CSS/style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <title>Measurement Tool</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
-
-<body>
+<body ng-app="MeasurementApp" ng-controller="MeasurementController">
 
 <div class="background">
     <div class="login-card measurement-card">
         <h1 class="app-title">Measurement Tool</h1>
         <p class="subtitle">Perform quantity operations</p>
 
-        <form id="measurementForm" class="measurement-layout">
+        <form ng-submit="handleSubmit()" class="measurement-layout">
             <div class="left-panel">
                 <div class="input-group">
                     <label>Category</label>
-                    <div id="categoryButtons" class="category-buttons" aria-label="Measurement categories"></div>
-                    <input type="hidden" id="category" value="Length">
+                    <div class="category-buttons" aria-label="Measurement categories">
+                        <button type="button" 
+                                ng-repeat="(cat, unitsObj) in units" 
+                                class="category-btn" 
+                                ng-class="{ active: currentCategory === cat }" 
+                                ng-click="setCategory(cat)">
+                            <span>{{ iconMap[cat] || "📌" }}</span>{{ cat }}
+                        </button>
+                    </div>
                 </div>
 
                 <div class="input-group">
                     <label>Operation</label>
-                    <select id="operation">
-                        <option value="Compare">Compare</option>
-                        <option value="Add">Add</option>
-                        <option value="Subtract">Subtract</option>
-                        <option value="Divide">Divide</option>
+                    <select ng-model="operation" ng-options="op for op in availableOperations" ng-change="updateOperatorIcon()">
                     </select>
                 </div>
 
                 <div class="input-group">
                     <label>Target Unit</label>
-                    <select id="targetUnit"></select>
+                    <select ng-model="targetUnit" ng-options="unit for unit in availableUnits"></select>
                 </div>
             </div>
 
@@ -49,33 +46,32 @@
                     <div class="value-box">
                         <label>Value 1</label>
                         <div class="input-with-select">
-                            <input type="number" id="value1" placeholder="Enter value 1">
-                            <select id="unit1"></select>
+                            <input type="number" ng-model="value1" placeholder="Enter value 1" required>
+                            <select ng-model="unit1" ng-options="unit for unit in availableUnits"></select>
                         </div>
                     </div>
                     
-                    <div class="operator-icon" id="operatorIcon">🧮</div>
+                    <div class="operator-icon">{{ operatorIcon }}</div>
 
                     <div class="value-box">
                         <label>Value 2</label>
                         <div class="input-with-select">
-                            <input type="number" id="value2" placeholder="Enter value 2">
-                            <select id="unit2"></select>
+                            <input type="number" ng-model="value2" placeholder="Enter value 2" ng-required="operation !== 'Compare'">
+                            <select ng-model="unit2" ng-options="unit for unit in availableUnits"></select>
                         </div>
                     </div>
                 </div>
 
-                <div id="result-box" class="result-box measurement-result">
-                    Result will appear here
+                <div class="result-box measurement-result">
+                    {{ resultMessage }}
                 </div>
 
-                <button class="login-btn execute-btn">Execute</button>
+                <button type="submit" class="login-btn execute-btn">Execute</button>
             </div>
         </form>
     </div>
 </div>
 
 <script src="../Javascript/Measurement.js"></script>
-
 </body>
 </html>

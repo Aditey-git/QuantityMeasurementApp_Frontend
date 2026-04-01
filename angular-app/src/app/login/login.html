@@ -1,0 +1,27 @@
+<div class="background">
+  <div class="login-card">
+    <h1 class="app-title">Quantity Measurement</h1>
+    <p class="subtitle">Sign in to your account</p>
+
+    <form (ngSubmit)="login()">
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" placeholder="Enter your password" required>
+          <span class="toggle-password" (click)="showPassword = !showPassword">{{ showPassword ? 'Hide' : 'Show' }}</span>
+        </div>
+      </div>
+
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+
+    <p class="register-link">
+      New user? <a routerLink="/register">Create an account</a>
+    </p>
+  </div>
+</div>

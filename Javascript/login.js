@@ -1,48 +1,38 @@
-document.getElementById("loginForm").addEventListener("submit", async function(e){
+const app = angular.module('LoginApp', []);
 
-    e.preventDefault()
+app.controller('LoginController', function ($scope, $http, $window) {
+    const backendBaseUrl = "http://localhost:5125";
 
-    const email=document.getElementById("email").value
-    const password=document.getElementById("password").value
+    $scope.email = "";
+    $scope.password = "";
+    $scope.showPassword = false;
 
-    if(email===""||password===""){
-        alert("Please fill all fields")
-        return
-    }
-
-    try {
-        const response = await fetch(`http://localhost:5125/api/auth/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
-            method: 'POST'
-        });
-
-        if (!response.ok) {
-            alert("Invalid Email or Password!");
+    $scope.login = function () {
+        if (!$scope.email || !$scope.password) {
+            alert("Please fill all fields");
             return;
         }
 
-        const data = await response.json();
-        localStorage.setItem("authToken", data.token);
-        window.location.href="../Html/Measurement.html"
 
-    } catch (error) {
-        console.error("Login Error:", error);
-        alert("Cannot reach the server.");
-    }
 
-})
-function togglePassword(inputId, element){
 
-const passwordInput = document.getElementById(inputId)
+        const loginUrl = `${backendBaseUrl}/api/auth/login?email=${encodeURIComponent($scope.email)}&password=${encodeURIComponent($scope.password)}`;
 
-if(passwordInput.type === "password")
-{
-passwordInput.type = "text"
-element.textContent = "Hide"
-}
-else
-{
-passwordInput.type = "password"
-element.textContent = "Show"
-}
 
-}
+
+        $http.post(loginUrl)
+            .then(function (response) {
+                const data = response.data;
+                $window.localStorage.setItem("authToken", data.token);
+                $window.location.href = "../Html/Measurement.html";
+            })
+            .catch(function (error) {
+                console.error("Login Error:", error);
+                if (error.status === 401) {
+                    alert("Invalid Email or Password!");
+                } else {
+                    alert("Cannot reach the server.");
+                }
+            });
+    };
+});

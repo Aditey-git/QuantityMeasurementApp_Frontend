@@ -1,0 +1,70 @@
+<div class="background">
+  <div class="login-card measurement-card">
+    <h1 class="app-title">Measurement Tool</h1>
+    <p class="subtitle">Perform quantity operations</p>
+
+    <div class="measurement-layout">
+      <!-- LEFT PANEL -->
+      <div class="left-panel">
+        <div class="input-group">
+          <label>Category</label>
+          <div class="category-buttons">
+            <button
+              type="button"
+              *ngFor="let cat of categories"
+              class="category-btn"
+              [class.active]="currentCategory === cat"
+              (click)="setCategory(cat)">
+              <span>{{ iconMap[cat] }}</span> {{ cat }}
+            </button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Operation</label>
+          <select [(ngModel)]="operation" name="operation" (ngModelChange)="updateOperatorIcon()">
+            <option *ngFor="let op of availableOperations" [value]="op">{{ op }}</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>Target Unit</label>
+          <select [(ngModel)]="targetUnit" name="targetUnit">
+            <option *ngFor="let unit of availableUnits" [value]="unit">{{ unit }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+        <div class="values-container">
+          <div class="value-box">
+            <label>Value 1</label>
+            <div class="input-with-select">
+              <input type="number" [(ngModel)]="value1" name="value1" placeholder="Enter value 1">
+              <select [(ngModel)]="unit1" name="unit1">
+                <option *ngFor="let unit of availableUnits" [value]="unit">{{ unit }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="operator-icon">{{ operatorIcon }}</div>
+
+          <div class="value-box">
+            <label>Value 2</label>
+            <div class="input-with-select">
+              <input type="number" [(ngModel)]="value2" name="value2" placeholder="Enter value 2">
+              <select [(ngModel)]="unit2" name="unit2">
+                <option *ngFor="let unit of availableUnits" [value]="unit">{{ unit }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-box measurement-result">{{ resultMessage }}</div>
+
+        <button class="login-btn execute-btn" (click)="execute()">Execute</button>
+      </div>
+    </div>
+  </div>
+</div>

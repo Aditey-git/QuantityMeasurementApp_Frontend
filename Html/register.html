@@ -1,80 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<title>Register - Quantity Measurement</title>
-
-<link rel="stylesheet" href="../CSS/style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <title>Register - Quantity Measurement</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
-
-<body>
+<body ng-app="RegisterApp" ng-controller="RegisterController">
 
 <div class="background">
+    <div class="login-card">
+        <h1 class="app-title">Quantity Measurement</h1>
+        <p class="subtitle">Create your account</p>
 
-<div class="login-card">
+        <form ng-submit="register()">
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" ng-model="email" placeholder="Enter your email" required>
+            </div>
 
-<h1 class="app-title">Quantity Measurement</h1>
-<p class="subtitle">Create your account</p>
+            <div class="input-group">
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="{{ showPassword ? 'text' : 'password' }}" ng-model="password" placeholder="Create a password" required>
+                    <span class="toggle-password" ng-click="showPassword = !showPassword">{{ showPassword ? 'Hide' : 'Show' }}</span>
+                </div>
+            </div>
 
-<form id="registerForm">
+            <div class="input-group">
+                <label>Confirm Password</label>
+                <div class="password-wrapper">
+                    <input type="{{ showConfirmPassword ? 'text' : 'password' }}" ng-model="confirmPassword" placeholder="Confirm password" required>
+                    <span class="toggle-password" ng-click="showConfirmPassword = !showConfirmPassword">{{ showConfirmPassword ? 'Hide' : 'Show' }}</span>
+                </div>
+            </div>
 
-<div class="input-group">
-<label>Email</label>
-<input type="email" id="email" placeholder="Enter your email">
-</div>
+            <button type="submit" class="login-btn">Register</button>
+        </form>
 
-<div class="input-group">
-
-<label>Password</label>
-
-<div class="password-wrapper">
-
-<input type="password" id="password" placeholder="Create a password">
-
-<span class="toggle-password" onclick="togglePassword('password', this)">Show</span>
-
-</div>
-
-</div>
-
-
-
-<div class="input-group">
-
-<label>Confirm Password</label>
-
-<div class="password-wrapper">
-
-<input type="password" id="confirmPassword" placeholder="Confirm password">
-
-<span class="toggle-password" onclick="togglePassword('confirmPassword', this)">Show</span>
-
-</div>
-
-</div>
-
-
-
-<button class="login-btn">Register</button>
-
-</form>
-
-<p class="register-link">
-Already have an account?
-<a href="login.html">Login</a>
-</p>
-
-</div>
-
+        <p class="register-link">
+            Already have an account?
+            <a href="login.html">Login</a>
+        </p>
+    </div>
 </div>
 
 <script src="../Javascript/register.js"></script>
-
 </body>
 </html>
