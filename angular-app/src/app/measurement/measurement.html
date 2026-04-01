@@ -1,70 +1,178 @@
 <div class="background">
   <div class="login-card measurement-card">
-    <h1 class="app-title">Measurement Tool</h1>
-    <p class="subtitle">Perform quantity operations</p>
 
-    <div class="measurement-layout">
-      <!-- LEFT PANEL -->
-      <div class="left-panel">
-        <div class="input-group">
-          <label>Category</label>
-          <div class="category-buttons">
-            <button
-              type="button"
-              *ngFor="let cat of categories"
-              class="category-btn"
-              [class.active]="currentCategory === cat"
-              (click)="setCategory(cat)">
-              <span>{{ iconMap[cat] }}</span> {{ cat }}
-            </button>
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label>Operation</label>
-          <select [(ngModel)]="operation" name="operation" (ngModelChange)="updateOperatorIcon()">
-            <option *ngFor="let op of availableOperations" [value]="op">{{ op }}</option>
-          </select>
-        </div>
-
-        <div class="input-group">
-          <label>Target Unit</label>
-          <select [(ngModel)]="targetUnit" name="targetUnit">
-            <option *ngFor="let unit of availableUnits" [value]="unit">{{ unit }}</option>
-          </select>
-        </div>
+    <!-- ── DASHBOARD HEADER ── -->
+    <div class="dash-header">
+      <div>
+        <h1 class="app-title">QuantityMeasurementApp</h1>
+        <p class="header-sub">{{ userEmail }}</p>
       </div>
-
-      <!-- RIGHT PANEL -->
-      <div class="right-panel">
-        <div class="values-container">
-          <div class="value-box">
-            <label>Value 1</label>
-            <div class="input-with-select">
-              <input type="number" [(ngModel)]="value1" name="value1" placeholder="Enter value 1">
-              <select [(ngModel)]="unit1" name="unit1">
-                <option *ngFor="let unit of availableUnits" [value]="unit">{{ unit }}</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="operator-icon">{{ operatorIcon }}</div>
-
-          <div class="value-box">
-            <label>Value 2</label>
-            <div class="input-with-select">
-              <input type="number" [(ngModel)]="value2" name="value2" placeholder="Enter value 2">
-              <select [(ngModel)]="unit2" name="unit2">
-                <option *ngFor="let unit of availableUnits" [value]="unit">{{ unit }}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="result-box measurement-result">{{ resultMessage }}</div>
-
-        <button class="login-btn execute-btn" (click)="execute()">Execute</button>
+      <div class="dash-nav">
+        <button class="tab-btn" [class.tab-active]="activeTab === 'calculator'" (click)="activeTab='calculator'">
+          🔢 Calculator
+        </button>
+        <button class="tab-btn" [class.tab-active]="activeTab === 'history'" (click)="switchToHistory()">
+          📋 History <span class="count-badge" *ngIf="historyCount > 0">{{ historyCount }}</span>
+        </button>
+        <button class="logout-btn-dash" (click)="logout()">🚪 Logout</button>
       </div>
     </div>
+
+    <!-- ════════════ CALCULATOR TAB ════════════ -->
+    <div *ngIf="activeTab === 'calculator'">
+      <p class="subtitle">Perform quantity operations</p>
+      <div class="measurement-layout">
+
+        <!-- LEFT: Category + Operation + Target Unit -->
+        <div class="left-panel">
+          <div class="input-group">
+            <label>Category</label>
+            <div class="category-buttons">
+              <button type="button" *ngFor="let cat of categories"
+                class="category-btn" [class.active]="currentCategory === cat"
+                (click)="setCategory(cat)">
+                <span>{{ iconMap[cat] }}</span> {{ cat }}
+              </button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Operation</label>
+            <select [(ngModel)]="operation" name="operation" (ngModelChange)="updateOperatorIcon()">
+              <option *ngFor="let op of availableOperations" [value]="op">{{ op }}</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Target Unit</label>
+            <select [(ngModel)]="targetUnit" name="targetUnit">
+              <option *ngFor="let u of availableUnits" [value]="u">{{ u }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- RIGHT: Values + Result + Execute -->
+        <div class="right-panel">
+          <div class="values-container">
+            <div class="value-box">
+              <label>Value 1</label>
+              <div class="input-with-select">
+                <input type="number" [(ngModel)]="value1" name="value1" placeholder="Enter value 1">
+                <select [(ngModel)]="unit1" name="unit1">
+                  <option *ngFor="let u of availableUnits" [value]="u">{{ u }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="operator-icon">{{ operatorIcon }}</div>
+
+            <div class="value-box">
+              <label>Value 2</label>
+              <div class="input-with-select">
+                <input type="number" [(ngModel)]="value2" name="value2" placeholder="Enter value 2">
+                <select [(ngModel)]="unit2" name="unit2">
+                  <option *ngFor="let u of availableUnits" [value]="u">{{ u }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-box measurement-result"
+               [class.result-success]="resultState === 'success'"
+               [class.result-error]="resultState === 'error'">
+            <span *ngIf="isExecuting">⏳ Processing…</span>
+            <span *ngIf="!isExecuting">{{ resultMessage }}</span>
+          </div>
+
+          <button class="login-btn execute-btn" (click)="execute()" [disabled]="isExecuting">
+            {{ isExecuting ? 'Running…' : '⚡ Execute' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════ HISTORY TAB ════════════ -->
+    <div *ngIf="activeTab === 'history'">
+      <div class="history-header-bar">
+        <p class="subtitle">Server history · Total: <strong>{{ historyCount }}</strong> records</p>
+        <div class="history-filters">
+          <div class="filter-group">
+            <label>Operation</label>
+            <select [(ngModel)]="filterOperation" name="filterOp" (ngModelChange)="applyFilter()">
+              <option value="all">All Operations</option>
+              <option value="compare">Compare</option>
+              <option value="add">Add</option>
+              <option value="subtract">Subtract</option>
+              <option value="divide">Divide</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Category</label>
+            <select [(ngModel)]="filterCategory" name="filterCat" (ngModelChange)="applyFilter()">
+              <option value="all">All Categories</option>
+              <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            </select>
+          </div>
+          <button class="refresh-btn" (click)="loadCount(); applyFilter()" [disabled]="isHistoryLoading">
+            🔄 Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="history-msg error-msg" *ngIf="historyError && !isHistoryLoading">⚠️ {{ historyError }}</div>
+
+      <!-- Loading -->
+      <div class="history-loading" *ngIf="isHistoryLoading">
+        <div class="loader-dots"><span></span><span></span><span></span></div>
+        <p>Loading history…</p>
+      </div>
+
+      <!-- Empty -->
+      <div class="history-msg" *ngIf="!isHistoryLoading && !historyError && displayedHistory.length === 0">
+        No records found. Run some operations first!
+      </div>
+
+      <!-- Records Table -->
+      <div class="history-table-wrap" *ngIf="!isHistoryLoading && displayedHistory.length > 0">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Operation</th>
+              <th>Value 1</th>
+              <th>Op</th>
+              <th>Value 2</th>
+              <th>Target</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of displayedHistory"
+                [class.row-ok]="!r?.errorMessage"
+                [class.row-err]="r?.errorMessage">
+              <td class="id-cell">{{ r?.id }}</td>
+              <td>{{ iconMap[r?.measurementCategory || ''] }} {{ r?.measurementCategory }}</td>
+              <td>{{ opIcon(r?.operationType || '') }} {{ formatOp(r?.operationType || '') }}</td>
+              <td>{{ r?.operand1Value }} <small>{{ r?.operand1Unit }}</small></td>
+              <td class="op-cell">{{ opIcon(r?.operationType || '') }}</td>
+              <td>{{ r?.operand2Value }} <small>{{ r?.operand2Unit }}</small></td>
+              <td><small>{{ r?.resultUnit || '—' }}</small></td>
+              <td class="result-cell">
+                <span *ngIf="!r?.errorMessage && r?.operationType === 'Compare'">
+                  Executed
+                </span>
+                <span *ngIf="!r?.errorMessage && r?.operationType !== 'Compare'">
+                  {{ r?.resultValue | number:'1.0-4' }} {{ r?.resultUnit }}
+                </span>
+                <span *ngIf="r?.errorMessage" class="err-text">{{ r?.errorMessage }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>

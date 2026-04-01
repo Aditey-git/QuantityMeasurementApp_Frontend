@@ -16,30 +16,42 @@ export class Register {
   confirmPassword = '';
   showPassword = false;
   showConfirmPassword = false;
+  isLoading = false;
+  errorMessage = '';
+  successMessage = '';
+
   private backendBaseUrl = 'http://localhost:5125';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   register() {
+    this.errorMessage = '';
+    this.successMessage = '';
+
     if (!this.email || !this.password || !this.confirmPassword) {
-      alert('Please fill all fields');
+      this.errorMessage = 'Please fill in all fields.';
       return;
     }
+
     if (this.password !== this.confirmPassword) {
-      alert('Passwords do not match');
+      this.errorMessage = 'Passwords do not match.';
       return;
     }
+
+    this.isLoading = true;
     const url = `${this.backendBaseUrl}/api/auth/register?email=${encodeURIComponent(this.email)}&password=${encodeURIComponent(this.password)}`;
     this.http.post(url, {}).subscribe({
       next: () => {
-        alert('Registration successful');
-        this.router.navigate(['/login']);
+        this.isLoading = false;
+        this.successMessage = 'Registration successful! Redirecting...';
+        setTimeout(() => this.router.navigate(['/login']), 1500);
       },
       error: (err) => {
+        this.isLoading = false;
         if (err.status === 400 || err.status === 409) {
-          alert('Registration failed. User may already exist.');
+          this.errorMessage = 'Registration failed. User may already exist.';
         } else {
-          alert('Cannot reach the server.');
+          this.errorMessage = 'Cannot reach the server. Ensure the API is running.';
         }
       }
     });

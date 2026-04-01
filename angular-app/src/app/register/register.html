@@ -1,35 +1,51 @@
 <div class="background">
   <div class="login-card">
-    <h1 class="app-title">Quantity Measurement</h1>
+    <h1 class="app-title">QuantityMeasurementApp</h1>
     <p class="subtitle">Create your account</p>
+
+    <div class="alert-banner" *ngIf="errorMessage">⚠️ {{ errorMessage }}</div>
+    <div class="success-banner" *ngIf="successMessage">✅ {{ successMessage }}</div>
 
     <form (ngSubmit)="register()">
       <div class="input-group">
-        <label>Email</label>
+        <label>Email Address</label>
         <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required>
       </div>
 
       <div class="input-group">
         <label>Password</label>
         <div class="password-wrapper">
-          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" placeholder="Create a password" required>
-          <span class="toggle-password" (click)="showPassword = !showPassword">{{ showPassword ? 'Hide' : 'Show' }}</span>
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password"
+            name="password" placeholder="Create a password" required>
+          <span class="toggle-password" (click)="showPassword = !showPassword">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </span>
         </div>
       </div>
 
       <div class="input-group">
         <label>Confirm Password</label>
         <div class="password-wrapper">
-          <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
-          <span class="toggle-password" (click)="showConfirmPassword = !showConfirmPassword">{{ showConfirmPassword ? 'Hide' : 'Show' }}</span>
+          <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword"
+            name="confirmPassword" placeholder="Confirm password" required>
+          <span class="toggle-password" (click)="showConfirmPassword = !showConfirmPassword">
+            {{ showConfirmPassword ? 'Hide' : 'Show' }}
+          </span>
         </div>
       </div>
 
-      <button type="submit" class="login-btn">Register</button>
+      <div class="pw-match" *ngIf="confirmPassword">
+        <span [class.match]="password === confirmPassword" [class.no-match]="password !== confirmPassword">
+          {{ password === confirmPassword ? '✅ Passwords match' : '❌ Passwords do not match' }}
+        </span>
+      </div>
+
+      <button type="submit" class="login-btn" [disabled]="isLoading">
+        <span class="btn-dots" *ngIf="isLoading"><span></span><span></span><span></span></span>
+        <span *ngIf="!isLoading">Register</span>
+      </button>
     </form>
 
-    <p class="register-link">
-      Already have an account? <a routerLink="/login">Login</a>
-    </p>
+    <p class="register-link">Already have an account? <a routerLink="/login">Login</a></p>
   </div>
 </div>
